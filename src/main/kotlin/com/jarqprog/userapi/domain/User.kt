@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 
 @JsonDeserialize(`as` = UserModel::class)
-public interface User {
+interface User {
 
     @JsonGetter
     fun login() : String

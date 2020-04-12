@@ -19,13 +19,22 @@ private val userCache = ConcurrentHashMap<String,CachedUser>()
 class UserFinder(private val db: UserDatabase)  {
 
     fun findBy(login: String): Optional<JsonUser> {
-        return userCache.computeIfAbsent(login) { asCachedUser(login) }.user
-
+        val tenMinutesAgo = LocalDateTime.now().minusMinutes(10)
+        return Optional.ofNullable(userCache[login])
+                .filter { cachedUser -> cachedUser.dateTime.isAfter(tenMinutesAgo) }
+                .map { cachedUser -> cachedUser.user }
+                .orElseGet {
+                    Optional.of(cacheUser(login))
+                        .map { userCache[login]?.user }
+                        .orElseGet { Optional.empty() }
+                }
     }
 
-    private fun asCachedUser(login: String) : CachedUser {
+    private fun cacheUser(login: String) : CachedUser {
         val user = Optional.ofNullable(db.connection().findOne<JsonUser>(searchQuery(login), db.collection()))
-        return CachedUser(user, LocalDateTime.now())
+        val cachedUser = CachedUser(user)
+        userCache[login] = cachedUser
+        return cachedUser
     }
 
     data class JsonUser(
@@ -38,4 +47,4 @@ class UserFinder(private val db: UserDatabase)  {
     private fun searchQuery(login: String) = Query().addCriteria(where(BSON_ID).`is`(login))
 }
 
-private data class CachedUser(val user: Optional<UserFinder.JsonUser>, val dateTime: LocalDateTime)
+data class CachedUser(val user: Optional<UserFinder.JsonUser>, val dateTime: LocalDateTime = LocalDateTime.now())

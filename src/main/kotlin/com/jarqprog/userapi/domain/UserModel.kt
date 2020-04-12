@@ -3,7 +3,7 @@ package com.jarqprog.userapi.domain
 import org.springframework.data.annotation.Id
 
 class UserModel(@Id private val login: String, private val address: Address,
-                       private val firstName: String = "", private val lastName: String = ""): User {
+                private val firstName: String = "", private val lastName: String = ""): User {
 
     constructor(user: User): this(user.login(), user.address(), user.firstName(), user.lastName())
 

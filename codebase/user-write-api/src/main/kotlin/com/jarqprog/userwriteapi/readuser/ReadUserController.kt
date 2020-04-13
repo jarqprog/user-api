@@ -1,4 +1,4 @@
-package com.jarqprog.userapi.readuser
+package com.jarqprog.userwriteapi.readuser
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity

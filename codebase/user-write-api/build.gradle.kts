@@ -1,20 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-	id("org.springframework.boot") version "2.2.6.RELEASE"
-	id("io.spring.dependency-management") version "1.0.9.RELEASE"
-	kotlin("jvm") version "1.3.71"
-	kotlin("plugin.spring") version "1.3.71"
-}
-
-group = "com.jarqprog"
-version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_14
-
-
-
-repositories {
-	mavenCentral()
+	java
+	id("org.springframework.boot")
+	id("io.spring.dependency-management")
+	kotlin("jvm")
+	kotlin("plugin.spring")
 }
 
 dependencies {
@@ -25,7 +17,6 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 //	implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
-
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
 	}
@@ -44,3 +35,10 @@ tasks.withType<KotlinCompile> {
 	}
 }
 
+//springBoot {
+//	mainClassName = "com.jarqprog.userwriteapi.UserApi"
+//}
+
+//tasks.getByName<BootJar>("bootJar") {
+//	mainClassName = "com.jarqprog.userwriteapi.UserApi"
+//}

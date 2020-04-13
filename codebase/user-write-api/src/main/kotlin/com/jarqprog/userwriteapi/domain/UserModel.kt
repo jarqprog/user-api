@@ -1,4 +1,4 @@
-package com.jarqprog.userapi.domain
+package com.jarqprog.userwriteapi.domain
 
 import org.springframework.data.annotation.Id
 

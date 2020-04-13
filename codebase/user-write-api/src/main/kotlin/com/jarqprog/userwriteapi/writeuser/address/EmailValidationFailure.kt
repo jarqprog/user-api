@@ -1,4 +1,4 @@
-package com.jarqprog.userapi.writeuser.address
+package com.jarqprog.userwriteapi.writeuser.address
 
 import java.lang.RuntimeException
 

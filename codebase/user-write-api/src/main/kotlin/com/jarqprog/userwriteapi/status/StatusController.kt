@@ -1,4 +1,4 @@
-package com.jarqprog.userapi.status
+package com.jarqprog.userwriteapi.status
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping

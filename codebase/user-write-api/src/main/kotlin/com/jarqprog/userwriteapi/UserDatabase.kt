@@ -1,4 +1,4 @@
-package com.jarqprog.userapi
+package com.jarqprog.userwriteapi
 
 import org.springframework.data.mongodb.core.MongoOperations
 

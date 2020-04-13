@@ -1,8 +1,9 @@
-package com.jarqprog.userapi.readuser
+package com.jarqprog.userwriteapi.readuser
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.jarqprog.userapi.UserDatabase
-import com.jarqprog.userapi.domain.Address
+import com.jarqprog.userwriteapi.UserDatabase
+import com.jarqprog.userwriteapi.domain.Address
+import com.jarqprog.userwriteapi.domain.AddressModel
 import org.slf4j.LoggerFactory
 import org.springframework.data.mongodb.core.findOne
 
@@ -39,7 +40,7 @@ class UserFinder(private val db: UserDatabase)  {
 
     data class JsonUser(
         @JsonProperty("login") val _id: String,
-        val address: Address,
+        val address: AddressModel,
         val firstName: String = "",
         val lastName: String = ""
     )

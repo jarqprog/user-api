@@ -1,7 +1,7 @@
-package com.jarqprog.userapi.writeuser
+package com.jarqprog.userwriteapi.writeuser
 
-import com.jarqprog.userapi.domain.User
-import com.jarqprog.userapi.domain.UserModel
+import com.jarqprog.userwriteapi.domain.User
+import com.jarqprog.userwriteapi.domain.UserModel
 import org.springframework.web.bind.annotation.*
 
 @RestController

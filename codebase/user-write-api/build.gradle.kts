@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
 	java
@@ -16,7 +15,6 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-//	implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
 	}
@@ -34,11 +32,3 @@ tasks.withType<KotlinCompile> {
 		jvmTarget = "13"
 	}
 }
-
-//springBoot {
-//	mainClassName = "com.jarqprog.userwriteapi.UserApi"
-//}
-
-//tasks.getByName<BootJar>("bootJar") {
-//	mainClassName = "com.jarqprog.userwriteapi.UserApi"
-//}

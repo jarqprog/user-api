@@ -1,41 +1,54 @@
 package com.jarqprog.userreadapi.user
 
-import java.time.LocalDateTime
-import java.util.Optional
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.collections.ArrayList
 
-private const val DEFAULT_CACHE_SIZE = 1000
+private val CACHE = ConcurrentHashMap<String, CachedUser>()
 
-class Cache(cacheSize: Int = DEFAULT_CACHE_SIZE) {
+private var isCleanInProgress =  AtomicBoolean(false)
 
-    init {
-        Singleton.cacheSize = cacheSize
-    }
+class Cache(cacheSize: Int = 5, private val acceptableAgeInMinutes: Long = 2L) {
+
+    private val defaultMaxCacheSize = AtomicInteger(cacheSize)
+    private var maxCacheSize = AtomicInteger(cacheSize)
 
     fun remember(login: String, optionalUser: Optional<JsonUser>) {
-        Singleton.remember(login, optionalUser)
+        CACHE[login] = CachedUser(optionalUser)
+        validateCache()
     }
 
     fun user(login: String): Optional<JsonUser> {
-        return Singleton.user(login)
+        return Optional.ofNullable(CACHE[login])
+                .filter { cachedUser -> cachedUser.isNotOlderThan(acceptableAgeInMinutes) }
+                .filter { cachedUser -> cachedUser.user.isPresent }
+                .map { cachedUser -> cachedUser.user }
+                .orElseGet { Optional.empty() }
     }
 
-    private companion object Singleton {
-        
-        private var cache = ConcurrentHashMap<String, CachedUser>()
-        private var cacheSize: Int = DEFAULT_CACHE_SIZE
+    private fun validateCache() {
+        if (CACHE.size > maxCacheSize.get() && !isCleanInProgress.get()) cleanUp()
+    }
 
-        private fun remember(login: String, optionalUser: Optional<JsonUser>) {
-            cache[login]= CachedUser(optionalUser)
-        }
-
-        private fun user(login: String): Optional<JsonUser> {
-            val tenMinutesAgo = LocalDateTime.now().minusMinutes(10)
-            return Optional.ofNullable(cache[login])
-                    .filter { cachedUser -> cachedUser.dateTime.isAfter(tenMinutesAgo) }
-                    .filter { cachedUser -> cachedUser.user.isPresent }
-                    .map { cachedUser -> cachedUser.user }
-                    .orElseGet { Optional.empty() }
+    private fun cleanUp() {
+        runBlocking {
+            launch(Dispatchers.Default) {
+                isCleanInProgress.set(true)
+                println("${Thread.currentThread()} has run.##### CLEANING")
+                val toRemove = ArrayList<String>()
+                CACHE.forEach { (login,cachedUser) -> if (cachedUser.isOlderThan(acceptableAgeInMinutes)) toRemove.add(login) }
+                toRemove.stream().map { login -> CACHE.remove(login) }
+                println("${Thread.currentThread()} has run.##### CLEANED")
+                isCleanInProgress.set(false)
+            }
         }
     }
 }
+
+
+

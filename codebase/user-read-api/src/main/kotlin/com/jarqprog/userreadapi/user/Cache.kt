@@ -6,17 +6,12 @@ import kotlinx.coroutines.runBlocking
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.collections.ArrayList
 
 private val CACHE = ConcurrentHashMap<String, CachedUser>()
-
 private var isCleanInProgress =  AtomicBoolean(false)
 
-class Cache(cacheSize: Int = 5, private val acceptableAgeInMinutes: Long = 2L) {
-
-    private val defaultMaxCacheSize = AtomicInteger(cacheSize)
-    private var maxCacheSize = AtomicInteger(cacheSize)
+class Cache(private val maxCacheSize: Int = 5, private val acceptableAgeInMinutes: Long = 2L) {
 
     fun remember(login: String, optionalUser: Optional<JsonUser>) {
         CACHE[login] = CachedUser(optionalUser)
@@ -32,18 +27,23 @@ class Cache(cacheSize: Int = 5, private val acceptableAgeInMinutes: Long = 2L) {
     }
 
     private fun validateCache() {
-        if (CACHE.size > maxCacheSize.get() && !isCleanInProgress.get()) cleanUp()
+        if (CACHE.size > maxCacheSize) {
+            if (!isCleanInProgress.get()) cleanUp()
+            // modify cache size else maxCacheSize
+        }
     }
 
     private fun cleanUp() {
         runBlocking {
             launch(Dispatchers.Default) {
                 isCleanInProgress.set(true)
+                println(CACHE.toString())
                 println("${Thread.currentThread()} has run.##### CLEANING")
                 val toRemove = ArrayList<String>()
                 CACHE.forEach { (login,cachedUser) -> if (cachedUser.isOlderThan(acceptableAgeInMinutes)) toRemove.add(login) }
-                toRemove.stream().map { login -> CACHE.remove(login) }
+                toRemove.forEach { login -> CACHE.remove(login) }
                 println("${Thread.currentThread()} has run.##### CLEANED")
+                println(CACHE.toString())
                 isCleanInProgress.set(false)
             }
         }

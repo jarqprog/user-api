@@ -1,7 +1,5 @@
-package com.jarqprog.userwriteapi.writeuser
+package com.jarqprog.userwriteapi.user
 
-import com.jarqprog.userwriteapi.domain.User
-import com.jarqprog.userwriteapi.domain.UserModel
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -10,11 +8,11 @@ class WriteUserController(private val repository: WriteUserRepository) {
 
     @PostMapping
     fun save(@RequestBody user: User) {
-        repository.save(UserModel(user))
+        repository.save(User(user))
     }
 
     @PutMapping
     fun update(@RequestBody user: User) {
-        repository.save(UserModel(user))
+        repository.save(User(user))
     }
 }

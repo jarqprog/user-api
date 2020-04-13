@@ -1,6 +1,6 @@
 package com.jarqprog.userreadapi.user
 
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Optional
 
 data class CachedUser(val user: Optional<JsonUser>, val dateTime: LocalDateTime = LocalDateTime.now())

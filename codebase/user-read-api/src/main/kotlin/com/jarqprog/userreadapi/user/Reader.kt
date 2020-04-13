@@ -11,17 +11,15 @@ private val LOGGER = LoggerFactory.getLogger(Reader::class.simpleName)
 private const val BSON_ID = "_id"
 
 
-class Reader(private val db: Database)  {
-
-    private val userCache = Cache()
+class Reader(private val db: Database, private val cache: Cache)  {
 
     fun findBy(login: String): Optional<JsonUser> {
-        return Optional.of(userCache.user(login))
+        return Optional.of(cache.user(login))
                 .filter {optionalUser -> optionalUser.isPresent }
                 .orElseGet {
                     val optionalUser = Optional
                             .ofNullable(db.connection().findOne<JsonUser>(searchQuery(login), db.collection()))
-                    userCache.remember(login, optionalUser)
+                    cache.remember(login, optionalUser)
                     optionalUser
                 }
     }

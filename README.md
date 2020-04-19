@@ -1,2 +1,2 @@
 # user-api
-Api to handle user domain. Monorepo.
+Read and write APIs to handle user domain.
